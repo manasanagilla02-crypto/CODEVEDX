@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 # Load dataset
 data = pd.read_csv("dataset.csv")
+print(data.columns.tolist())
 
 # Dataset Information
 print("\nDataset Information:")
@@ -64,28 +65,16 @@ print("\nPredicted Final Score:", round(result[0], 2))
 
 plt.figure(figsize=(8,5))
 
-# Scatter Plot
 plt.scatter(
-    data["study_hours"],
-    data["final_score"],
+    data["marks"].head(10),
+    data["final_score"].head(10),
     color="blue",
-    s=80,
-    label="Students"
-)
-
-# Trend Line
-plt.plot(
-    data["study_hours"],
-    model.predict(data[["attendance", "marks", "study_hours"]]),
-    color="red",
-    linewidth=2,
-    label="Trend"
+    s=60
 )
 
 plt.title("Student Performance Analysis")
-plt.xlabel("Study Hours per Day")
+plt.xlabel("Marks")
 plt.ylabel("Final Score")
-plt.grid(True)
-plt.legend()
+plt.grid(False)
 
 plt.show()
