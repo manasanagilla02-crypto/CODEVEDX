@@ -6,10 +6,10 @@ import string
 from nltk.corpus import stopwords
 
 # Download stopwords
-nltk.download('stopwords')
+nltk.download("stopwords")
 
 # Load dataset
-data = pd.read_csv("dataset.csv")
+data = pd.read_csv("news.csv")
 
 # Load trained model and vectorizer
 model = pickle.load(open("model.pkl", "rb"))
@@ -17,7 +17,7 @@ vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 # Text preprocessing function
 def clean_text(text):
-    text = text.lower()
+    text = str(text).lower()
 
     # Remove punctuation
     for p in string.punctuation:
@@ -41,36 +41,19 @@ print("================================")
 print("Dataset Loaded Successfully!")
 print("Total News Records:", len(data))
 
-while True:
 
-    print("\n1. Predict News")
-    print("2. Exit")
+# Take input directly
+news = input("\nEnter News Text: ")
 
-    choice = input("\nEnter your choice: ")
+clean_news = clean_text(news)
 
-    if choice == "1":
+news_vector = vectorizer.transform([clean_news])
 
-        news = input("\nEnter News Text: ")
+prediction = model.predict(news_vector)[0]
 
-        clean_news = clean_text(news)
+confidence = max(model.predict_proba(news_vector)[0]) * 100
 
-        news_vector = vectorizer.transform([clean_news])
-
-        prediction = model.predict(news_vector)[0]
-
-        confidence = max(model.predict_proba(news_vector)[0]) * 100
-
-        print("\n========== RESULT ==========")
-        print("Prediction       :", prediction)
-        print("Confidence Score :", round(confidence, 2), "%")
-        print("============================")
-
-    elif choice == "2":
-
-        print("\nExiting the application...")
-        print("Thank you for using the AI Based Fake News Detection Tool.")
-        break
-
-    else:
-
-        print("\nInvalid choice! Please enter 1 or 2.")
+print("\n========== RESULT ==========")
+print("Prediction       :", prediction)
+print("Confidence Score :", round(confidence, 2), "%")
+print("============================")
