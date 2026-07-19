@@ -1,3 +1,4 @@
+import pandas as pd
 import pickle
 import nltk
 import string
@@ -6,6 +7,9 @@ from nltk.corpus import stopwords
 
 # Download stopwords
 nltk.download('stopwords')
+
+# Load dataset
+data = pd.read_csv("dataset.csv")
 
 # Load trained model and vectorizer
 model = pickle.load(open("model.pkl", "rb"))
@@ -31,19 +35,22 @@ def clean_text(text):
 
     return " ".join(filtered_words)
 
+print("\n================================")
+print(" AI FAKE NEWS DETECTION TOOL")
+print("================================")
+print("Dataset Loaded Successfully!")
+print("Total News Records:", len(data))
 
-# Menu
 while True:
-    print("\n===================================")
-    print(" AI Based Fake News Detection Tool ")
-    print("===================================")
-    print("1. Predict News")
+
+    print("\n1. Predict News")
     print("2. Exit")
 
     choice = input("\nEnter your choice: ")
 
     if choice == "1":
-        news = input("\nEnter News Text:\n")
+
+        news = input("\nEnter News Text: ")
 
         clean_news = clean_text(news)
 
@@ -53,14 +60,17 @@ while True:
 
         confidence = max(model.predict_proba(news_vector)[0]) * 100
 
-        print("\n========== Prediction ==========")
-        print("Result           :", prediction)
+        print("\n========== RESULT ==========")
+        print("Prediction       :", prediction)
         print("Confidence Score :", round(confidence, 2), "%")
-        print("================================")
+        print("============================")
 
     elif choice == "2":
-        print("\nThank you for using the AI Based Fake News Detection Tool!")
+
+        print("\nExiting the application...")
+        print("Thank you for using the AI Based Fake News Detection Tool.")
         break
 
     else:
-        print("\nInvalid choice! Please try again.")
+
+        print("\nInvalid choice! Please enter 1 or 2.")
