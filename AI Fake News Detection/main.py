@@ -1,41 +1,66 @@
 import pickle
+import nltk
+import string
+
+from nltk.corpus import stopwords
+
+# Download stopwords
+nltk.download('stopwords')
 
 # Load trained model and vectorizer
-with open("fake_news_model.pkl", "rb") as model_file:
-    model = pickle.load(model_file)
+model = pickle.load(open("model.pkl", "rb"))
+vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
-with open("vectorizer.pkl", "rb") as vectorizer_file:
-    vectorizer = pickle.load(vectorizer_file)
+# Text preprocessing function
+def clean_text(text):
+    text = text.lower()
 
-print("=" * 50)
-print(" AI Based Fake News Detection Tool ")
-print("=" * 50)
+    # Remove punctuation
+    for p in string.punctuation:
+        text = text.replace(p, "")
 
+    # Remove stopwords
+    stop_words = set(stopwords.words("english"))
+    words = text.split()
+
+    filtered_words = []
+
+    for word in words:
+        if word not in stop_words:
+            filtered_words.append(word)
+
+    return " ".join(filtered_words)
+
+
+# Menu
 while True:
-    print("\nMenu")
+    print("\n===================================")
+    print(" AI Based Fake News Detection Tool ")
+    print("===================================")
     print("1. Predict News")
     print("2. Exit")
 
-    choice = input("Enter your choice: ")
+    choice = input("\nEnter your choice: ")
 
     if choice == "1":
         news = input("\nEnter News Text:\n")
 
-        # Convert text into TF-IDF features
-        news_vector = vectorizer.transform([news])
+        clean_news = clean_text(news)
 
-        # Prediction
+        news_vector = vectorizer.transform([clean_news])
+
         prediction = model.predict(news_vector)[0]
 
-        # Confidence score
         confidence = max(model.predict_proba(news_vector)[0]) * 100
 
-        print("\nPrediction:", prediction)
-        print(f"Confidence Score: {confidence:.2f}%")
+        print("\n========== Prediction ==========")
+        print("Result           :", prediction)
+        print("Confidence Score :", round(confidence, 2), "%")
+        print("================================")
 
     elif choice == "2":
-        print("\nThank you for using the AI Based Fake News Detection Tool.")
+        print("\nThank you for using the AI Based Fake News Detection Tool!")
         break
 
     else:
-        print("\nInvalid choice. Please try again.")
+        print("\nInvalid choice! Please try again.")
